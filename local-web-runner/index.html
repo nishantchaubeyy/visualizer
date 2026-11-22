@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AnyChart Android - Localhost Demo & Showcase</title>
+  <link rel="stylesheet" href="assets/anychart-ui.min.css">
+  <script src="assets/anychart-android.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-light: #334155;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --accent: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .brand .badge {
+      background: #0369a1;
+      color: #bae6fd;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .main-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    sidebar {
+      width: 280px;
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-list {
+      flex: 1;
+      overflow-y: auto;
+      list-style: none;
+      padding: 8px;
+    }
+
+    .nav-item {
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-item:hover {
+      background-color: var(--surface-light);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background-color: #0284c7;
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-color: #0b1120;
+    }
+
+    .toolbar {
+      padding: 12px 20px;
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #0f172a;
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .notice-bar {
+      background: rgba(56, 189, 248, 0.1);
+      border-left: 4px solid var(--primary);
+      padding: 10px 20px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .notice-bar code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: var(--primary);
+    }
+
+    .view-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #chart-container {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+    }
+
+    #code-container {
+      display: none;
+      width: 100%;
+      height: 100%;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 20px;
+      overflow: auto;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      white-space: pre;
+    }
+
+    .footer-bar {
+      padding: 8px 20px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary)"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      <h1>AnyChart Android App Showcase</h1>
+      <span class="badge">API 19+ Engine</span>
+    </div>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      Running on Localhost:8080
+    </div>
+  </header>
+
+  <div class="notice-bar">
+    <div>
+      ℹ️ <strong>Project Note:</strong> <code>AnyChart-Android</code> is an Android library & sample app that wraps AnyChart JS inside a native Android <code>WebView</code>. Below is the live interactive chart rendered via the repository's bundled <code>anychart-android.min.js</code>.
+    </div>
+  </div>
+
+  <div class="main-container">
+    <sidebar>
+      <div class="sidebar-header">Sample Activities</div>
+      <ul class="nav-list" id="nav-list">
+        <li class="nav-item active" data-chart="pie">Pie Chart</li>
+        <li class="nav-item" data-chart="column">Column Chart</li>
+        <li class="nav-item" data-chart="line">Line Chart</li>
+        <li class="nav-item" data-chart="area">Area Chart</li>
+        <li class="nav-item" data-chart="bar">Bar Chart</li>
+        <li class="nav-item" data-chart="tagcloud">Tag Cloud</li>
+        <li class="nav-item" data-chart="venn">Venn Diagram</li>
+        <li class="nav-item" data-chart="radar">Radar Chart</li>
+      </ul>
+    </sidebar>
+
+    <div class="content-area">
+      <div class="toolbar">
+        <div id="chart-title" style="font-weight: 600; font-size: 1rem;">Pie Chart (Fruits imported)</div>
+        <div class="tab-buttons">
+          <button class="tab-btn active" id="btn-chart">Interactive Chart</button>
+          <button class="tab-btn" id="btn-code">Android Java Code</button>
+        </div>
+      </div>
+
+      <div class="view-panel">
+        <div id="chart-container"></div>
+        <pre id="code-container"></pre>
+      </div>
+
+      <div class="footer-bar">
+        <span>Engine: bundled <code>anychart-android.min.js</code> (v8.x)</span>
+        <span>Source: <code>AnyChart-Android/sample/src/main/java</code></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentChart = null;
+
+    const chartSamples = {
+      pie: {
+        title: "Pie Chart (Fruits imported in 2015)",
+        code: `// From: sample/src/main/java/com/anychart/sample/charts/PieChartActivity.java
+Pie pie = AnyChart.pie();
+
+List<DataEntry> data = new ArrayList<>();
+data.add(new ValueDataEntry("Apples", 6371664));
+data.add(new ValueDataEntry("Pears", 789622));
+data.add(new ValueDataEntry("Bananas", 7216301));
+data.add(new ValueDataEntry("Grapes", 1486621));
+data.add(new ValueDataEntry("Oranges", 1200000));
+
+pie.data(data);
+pie.title("Fruits imported in 2015 (in kg)");
+pie.labels().position("outside");
+
+pie.legend().title().enabled(true);
+pie.legend().title().text("Retail channels").padding(0d, 0d, 10d, 0d);
+pie.legend().position("center-bottom").itemsLayout(LegendLayout.HORIZONTAL).align(Align.CENTER);
+
+anyChartView.setChart(pie);`,
+        render: function(container) {
+          const chart = anychart.pie([
+            {x: "Apples", value: 6371664},
+            {x: "Pears", value: 789622},
+            {x: "Bananas", value: 7216301},
+            {x: "Grapes", value: 1486621},
+            {x: "Oranges", value: 1200000}
+          ]);
+          chart.title("Fruits imported in 2015 (in kg)");
+          chart.labels().position("outside");
+          chart.legend().title().enabled(true);
+          chart.legend().title().text("Retail channels").padding(0, 0, 10, 0);
+          chart.legend().position("center-bottom").itemsLayout("horizontal").align("center");
+          chart.container(container);
+          chart.draw();
+          return chart;
+        }
+      },
+      column: {
+        title: "Column Chart (Top Cosmetic Products by Revenue)",
+        code: `// From: sample/src/main/java/com/anychart/sample/charts/ColumnChartActivity.java
+Cartesian cartesian = AnyChart.column();
+
+List<DataEntry> data = new ArrayList<>();
+data.add(new ValueDataEntry("Rouge", 80540));
+data.add(new ValueDataEntry("Foundation", 94190));
+data.add(new ValueDataEntry("Mascara", 102610));
+data.add(new ValueDataEntry("Lip gloss", 110430));
+data.add(new ValueDataEntry("Lipstick", 128000));
+data.add(new ValueDataEntry("Nail polish", 143760));
+data.add(new ValueDataEntry("Eyebrow pencil", 170670));
+data.add(new ValueDataEntry("Eyeliner", 213210));
+data.add(new ValueDataEntry("Eyeshadows", 249980));
+
+Column column = cartesian.column(data);
+column.tooltip().titleFormat("{%X}").format("\${%Value}{groupsSeparator: }");
+cartesian.animation(true);
+cartesian.title("Top 10 Cosmetic Products by Revenue");
+cartesian.yScale().minimum(0d);
+cartesian.yAxis(0).labels().format("\${%Value}{groupsSeparator: }");
+
+anyChartView.setChart(cartesian);`,
+        render: function(container) {
+          const chart = anychart.column();
+          chart.animation(true);
+          chart.title("Top 10 Cosmetic Products by Revenue");
+          const series = chart.column([
+            ["Rouge", 80540],
+            ["Foundation", 94190],
+            ["Mascara", 102610],
+            ["Lip gloss", 110430],
+            ["Lipstick", 128000],
+            ["Nail polish", 143760],
+            ["Eyebrow pencil", 170670],
+            ["Eyeliner", 213210],
+            ["Eyeshadows", 249980]
+          ]);
+          series.tooltip().titleFormat("{%X}").format("${%Value}{groupsSeparator: }");
+          chart.yScale().minimum(0);
+          chart.yAxis(0).labels().format("${%Value}{groupsSeparator: }");
+          chart.container(container);
+          chart.draw();
+          return chart;
+        }
+      },
+      line: {
+        title: "Line Chart (Trend of Sales of Popular Products)",
+        code: `// From: sample/src/main/java/com/anychart/sample/charts/LineChartActivity.java
+Cartesian cartesian = AnyChart.line();
+cartesian.animation(true);
+cartesian.padding(10d, 20d, 5d, 20d);
+cartesian.crosshair().enabled(true);
+cartesian.title("Trend of Sales of the Most Popular Products of ACME Corp.");
+
+Set set = Set.instantiate();
+set.data(seriesData);
+Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
+Mapping series2Mapping = set.mapAs("{ x: 'x', value: 'value2' }");
+Mapping series3Mapping = set.mapAs("{ x: 'x', value: 'value3' }");
+
+Line series1 = cartesian.line(series1Mapping);
+series1.name("Brandy");
+Line series2 = cartesian.line(series2Mapping);
+series2.name("Whiskey");
+Line series3 = cartesian.line(series3Mapping);
+series3.name("Tequila");
+
+anyChartView.setChart(cartesian);`,
+        render: function(container) {
+          const chart = anychart.line();
+          chart.animation(true);
+          chart.padding(10, 20, 5, 20);
+          chart.crosshair().enabled(true);
+          chart.title("Trend of Sales of the Most Popular Products of ACME Corp.");
+          const data = [
+            ["1986", 3.6, 2.3, 2.8],
+            ["1987", 7.1, 4.0, 4.1],
+            ["1988", 8.5, 6.2, 5.1],
+            ["1989", 9.2, 11.8, 6.5],
+            ["1990", 10.1, 13.0, 12.5],
+            ["1991", 11.6, 13.9, 18.0],
+            ["1992", 16.4, 18.0, 21.0],
+            ["1993", 18.0, 23.3, 20.3]
+          ];
+          const dataSet = anychart.data.set(data);
+          chart.line(dataSet.mapAs({x: 0, value: 1})).name("Brandy");
+          chart.line(dataSet.mapAs({x: 0, value: 2})).name("Whiskey");
+          chart.line(dataSet.mapAs({x: 0, value: 3})).name("Tequila");
+          chart.legend().enabled(true);
+          chart.container(container);
+          chart.draw();
+          return chart;
+        }
+      },
+      area: {
+        title: "Area Chart (Quarterly Sales Performance)",
+        code: `// From: sample/src/main/java/com/anychart/sample/charts/AreaChartActivity.java
+Cartesian area = AnyChart.area();
+area.animation(true);
+area.title("Company Sales vs Operational Costs");
+Area series1 = area.area(salesData);
+series1.name("Sales");
+Area series2 = area.area(costsData);
+series2.name("Operational Costs");
+
+anyChartView.setChart(area);`,
+        render: function(container) {
+          const chart = anychart.area();
+          chart.animation(true);
+          chart.title("Company Sales vs Operational Costs (in $ thousands)");
+          const data = [
+            ["Q1 2021", 120, 90],
+            ["Q2 2021", 150, 110],
+            ["Q3 2021", 180, 125],
+            ["Q4 2021", 220, 140],
+            ["Q1 2022", 210, 135],
+            ["Q2 2022", 260, 150]
+          ];
+          const dataSet = anychart.data.set(data);
+          chart.area(dataSet.mapAs({x: 0, value: 1})).name("Sales");
+          chart.area(dataSet.mapAs({x: 0, value: 2})).name("Operational Costs");
+          chart.legend().enabled(true);
+          chart.container(container);
+          chart.draw();
+          return chart;
+        }
+      },
+      bar: {
+        title: "Bar Chart (Top 10 World's Biggest Economies)",
+        code: `// From: sample/src/main/java/com/anychart/sample/charts/BarChartActivity.java
+Cartesian bar = AnyChart.bar();
+bar.animation(true);
+bar.title("Top 10 World's Biggest Economies (GDP in Trillions USD)");
+Bar series = bar.bar(gdpData);
+series.tooltip().format("$\{%Value\}T");
+
+anyChartView.setChart(bar);`,
+        render: function(container) {
+          const chart = anychart.bar();
+          chart.animation(true);
+          chart.title("Top World Economies by GDP (Trillions USD)");
+          chart.bar([
+            ["United States", 26.9],
+            ["China", 17.7],
+            ["Germany", 4.4],
+            ["Japan", 4.2],
+            ["India", 3.7],
+            ["United Kingdom", 3.3],
+            ["France", 3.0],
+            ["Italy", 2.2]
+          ]);
+          chart.container(container);
+          chart.draw();
+          return chart;
+        }
+      },
+      tagcloud: {
+        title: "Tag Cloud (World Population)",
+        code: `// From: sample/src/main/java/com/anychart/sample/charts/TagCloudActivity.java
+TagCloud tagCloud = AnyChart.tagCloud();
+tagCloud.title("World Population");
+
+OrdinalColor ordinalColor = OrdinalColor.instantiate();
+ordinalColor.colors(new String[] {
+    "#26959f", "#f18126", "#3b8ad8", "#60727b", "#e24b26"
+});
+tagCloud.colorScale(ordinalColor);
+tagCloud.angles(new Double[] {-90d, 0d, 90d});
+tagCloud.colorRange().enabled(true);
+tagCloud.data(data);
+
+anyChartView.setChart(tagCloud);`,
+        render: function(container) {
+          const chart = anychart.tagCloud([
+            {x: "China", category: "asia", value: 1383220000},
+            {x: "India", category: "asia", value: 1316000000},
+            {x: "United States", category: "america", value: 324982000},
+            {x: "Indonesia", category: "asia", value: 263510000},
+            {x: "Brazil", category: "america", value: 207505000},
+            {x: "Pakistan", category: "asia", value: 196459000},
+            {x: "Nigeria", category: "africa", value: 191836000},
+            {x: "Bangladesh", category: "asia", value: 162459000},
+            {x: "Russia", category: "europe", value: 146804372},
+            {x: "Japan", category: "asia", value: 126760000},
+            {x: "Mexico", category: "america", value: 123518000},
+            {x: "Germany", category: "europe", value: 82800000}
+          ]);
+          chart.title("World Population");
+          chart.angles([0]);
+          chart.container(container);
+          chart.draw();
+          return chart;
+        }
+      },
+      venn: {
+        title: "Venn Diagram (Data Science)",
+        code: `// From: sample/src/main/java/com/anychart/sample/charts/VennDiagramActivity.java
+Venn venn = AnyChart.venn();
+
+List<DataEntry> data = new ArrayList<>();
+data.add(new NameValueDataEntry("A", "Data Science", 100));
+data.add(new NameValueDataEntry("B", "Computer Science", 25));
+data.add(new NameValueDataEntry("C", "Math and Statistics", 25));
+data.add(new NameValueDataEntry("D", "Subject Matter Expertise", 25));
+data.add(new NameValueDataEntry("A&B", "Computer Science", 50));
+data.add(new NameValueDataEntry("A&C", "Math and Statistics", 50));
+data.add(new NameValueDataEntry("A&D", "Subject Matter Expertise", 50));
+
+venn.data(data);
+venn.stroke("2 #FFFFFF");
+venn.labels().format("{%Name}");
+anyChartView.setChart(venn);`,
+        render: function(container) {
+          const chart = anychart.venn([
+            {x: "A", name: "Data Science", value: 100},
+            {x: "B", name: "Computer Science", value: 25},
+            {x: "C", name: "Math & Stats", value: 25},
+            {x: ["A", "B"], name: "Machine Learning", value: 20},
+            {x: ["A", "C"], name: "Statistical Modeling", value: 20}
+          ]);
+          chart.title("Data Science Venn Diagram");
+          chart.stroke("2 #FFFFFF");
+          chart.labels().format("{%Name}");
+          chart.container(container);
+          chart.draw();
+          return chart;
+        }
+      },
+      radar: {
+        title: "Radar Chart (Product Features Comparison)",
+        code: `// From: sample/src/main/java/com/anychart/sample/charts/RadarChartActivity.java
+Radar radar = AnyChart.radar();
+radar.title("Smartphone Specs Comparison");
+radar.data(data);
+radar.animation(true);
+anyChartView.setChart(radar);`,
+        render: function(container) {
+          const chart = anychart.radar();
+          chart.title("Smartphone Specs Comparison");
+          const data = [
+            {x: "Battery", value: 85},
+            {x: "Camera", value: 92},
+            {x: "Display", value: 88},
+            {x: "Performance", value: 95},
+            {x: "Design", value: 80},
+            {x: "Value", value: 75}
+          ];
+          chart.line(data).name("Model X");
+          chart.container(container);
+          chart.draw();
+          return chart;
+        }
+      }
+    };
+
+    function loadChart(key) {
+      const sample = chartSamples[key];
+      if (!sample) return;
+
+      document.getElementById('chart-title').innerText = sample.title;
+      document.getElementById('code-container').innerText = sample.code;
+
+      const container = document.getElementById('chart-container');
+      container.innerHTML = '';
+
+      try {
+        currentChart = sample.render(container);
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<div style="color:red;padding:20px;">Render error: ' + err.message + '</div>';
+      }
+    }
+
+    // Tab buttons
+    document.getElementById('btn-chart').addEventListener('click', function() {
+      this.classList.add('active');
+      document.getElementById('btn-code').classList.remove('active');
+      document.getElementById('chart-container').style.display = 'block';
+      document.getElementById('code-container').style.display = 'none';
+    });
+
+    document.getElementById('btn-code').addEventListener('click', function() {
+      this.classList.add('active');
+      document.getElementById('btn-chart').classList.remove('active');
+      document.getElementById('chart-container').style.display = 'none';
+      document.getElementById('code-container').style.display = 'block';
+    });
+
+    // Nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        this.classList.add('active');
+        const key = this.getAttribute('data-chart');
+        loadChart(key);
+      });
+    });
+
+    // Initialize
+    anychart.onDocumentReady(function () {
+      loadChart('pie');
+    });
+  </script>
+</body>
+</html>
+
