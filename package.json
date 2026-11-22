@@ -1,0 +1,18 @@
+{
+  "name": "anychart-visualizer",
+  "version": "1.0.0",
+  "description": "AnyChart interactive visualizer and Android showcase",
+  "main": "local-web-runner/server.js",
+  "scripts": {
+    "start": "node local-web-runner/server.js",
+    "dev": "node local-web-runner/server.js"
+  },
+  "keywords": [
+    "anychart",
+    "charts",
+    "visualizer",
+    "android"
+  ],
+  "author": "Nishant Kumar Chaubey",
+  "license": "Apache-2.0"
+}
